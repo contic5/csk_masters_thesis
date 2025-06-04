@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type='text/css'>
+body
+{
+  background-color: #ADD8E6;
+}
+canvas
+{
+  border:black solid 5px;
+}
+p
+{
+  font-weight: bold;
+  font-size: 18px;
+}
+</style>
+</head>
+<body>
+  <img id='human' src='noun_Man_2_small.png'></img>
+  <img id='robot' src='noun_Robot_72418_small.png'></img>
+  <h2>Assembly Simulation</h2>
+  <p>Blue Parts are grabbed by Human Arm<br>
+  Red Parts are grabbed by Robot Arm</p>
+  <canvas id="canvasDemo" width="1400" height="630">
+  Sorry, your browser does not support canvas.
+  </canvas>
+<script type='text/javascript'>
+
+class Shape
+{
+  constructor(x,y,w,h,shapename,partname)
+  {
+    this.x=x;
+    this.y=y;
+    this.w=w;
+    this.h=h;
+    this.shapename=shapename;
+    this.partname=partname;
+  }
+}
+
+var canvas=document.getElementById("canvasDemo");
+var ctx=canvas.getContext("2d");
+function changestyle(fillstyle,strokestyle='#000000')
+{
+  ctx.fillStyle=fillstyle;
+  ctx.strokeStyle=strokestyle;
+}
+function draw()
+{
+  if(!started)
+  {
+    ctx.drawImage(img1, 650, 0);
+    ctx.drawImage(img2, 1150, 0);
+    //ctx.clearRect(0,0,800,400);
+    myhex='#00aa00';
+    holdhex=myhex;
+    ctx.fillStyle=myhex;
+    for(i=0;i<endshapes.length;i++)
+    {
+      if(shapes[i].shapename=='rectangle')
+      {
+        //Draw Rectangle
+        changestyle('#00aa00');
+        ctx.beginPath();
+        ctx.rect(endshapes[i].x,endshapes[i].y,endshapes[i].w,endshapes[i].h);
+        ctx.fill();
+        ctx.stroke();
+
+        //Rectangle Text
+        changestyle('#ffffff','#000000');
+        //ctx.strokeText(endshapes[i].partname, endshapes[i].x+5, endshapes[i].y+endshapes[i].h/2);
+        ctx.fillText(endshapes[i].partname, endshapes[i].x+5, endshapes[i].y+endshapes[i].h/2);
+      }
+      else
+      {
+        //Draw Circle
+        changestyle('#00aa00');
+        ctx.beginPath();
+        ctx.arc(endshapes[i].x+endshapes[i].w/2, endshapes[i].y+endshapes[i].h/2, endshapes[i].w/2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        //Circle Text
+        changestyle('#ffffff','#000000');
+        ///ctx.strokeText(shapes[i].partname, endshapes[i].x+endshapes[i].w/4, endshapes[i].y+endshapes[i].h/2);
+        ctx.fillText(shapes[i].partname, endshapes[i].x+endshapes[i].w/4, endshapes[i].y+endshapes[i].h/2);
+        changestyle('#00aa00');
+      }
+    }
+    started=true;
+  }
+  for(i=shapes.length-1;i>=0;i--)
+  {
+    if(count%total>=i+startwait)
+    {
+      if(shapes[i].shapename=='rectangle')
+      {
+
+        //Clear Previous Rectangle
+        changestyle('#ADD8E6','#ADD8E6');
+        ctx.beginPath();
+        ctx.rect(startshapes[i].x,startshapes[i].y,startshapes[i].w,startshapes[i].h);
+        ctx.fill();
+        ctx.stroke();
+
+        //Draw New Rectangle
+        changestyle(styles[i%2]);
+        ctx.beginPath();
+        ctx.rect(shapes[i].x,shapes[i].y,shapes[i].w,shapes[i].h);
+        ctx.fill();
+        ctx.stroke();
+
+        //Write Rectangle Text
+        changestyle('#ffffff','#000000');
+        ///ctx.strokeText(shapes[i].partname, shapes[i].x+5, shapes[i].y+shapes[i].h/2);
+        ctx.fillText(shapes[i].partname, shapes[i].x+5, shapes[i].y+shapes[i].h/2);
+        myhex=holdhex;
+        ctx.fillStyle=myhex;
+      }
+      else
+      {
+        //Clear Previous Circle
+        changestyle('#ADD8E6','#ADD8E6');
+        ctx.beginPath();
+        ctx.arc(startshapes[i].x+startshapes[i].w/2, startshapes[i].y+startshapes[i].h/2, startshapes[i].w/2+1, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+
+
+        //Draw New Circle
+        changestyle(styles[i%2]);
+        ctx.beginPath();
+        ctx.arc(shapes[i].x+shapes[i].w/2, shapes[i].y+shapes[i].h/2, shapes[i].w/2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        //Write Circle Text
+        changestyle('#ffffff','#000000');
+        //ctx.strokeText(shapes[i].partname, shapes[i].x+shapes[i].w/4, shapes[i].y+shapes[i].h/2);
+        ctx.fillText(shapes[i].partname, shapes[i].x+shapes[i].w/4, shapes[i].y+shapes[i].h/2);
+
+      }
+    }
+    else
+    {
+      if(shapes[i].shapename=='rectangle')
+      {
+        //Draw New Rectangle
+        changestyle(styles[i%2]);
+        ctx.beginPath();
+        ctx.rect(startshapes[i].x,startshapes[i].y,startshapes[i].w,startshapes[i].h);
+        ctx.fill();
+        ctx.stroke();
+
+        //Clear Previous Rectangle
+        changestyle('#ADD8E6','#ADD8E6');
+        ctx.beginPath();
+        ctx.rect(shapes[i].x-2,shapes[i].y-2,shapes[i].w+2,shapes[i].h+2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      else
+      {
+        //Clear Previous Circle
+        changestyle('#ADD8E6','#ADD8E6');
+        ctx.beginPath();
+        ctx.arc(shapes[i].x+shapes[i].w/2, shapes[i].y+shapes[i].h/2, shapes[i].w/2+1, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        //Draw New Circle
+        changestyle(styles[i%2]);
+        ctx.beginPath();
+        ctx.arc(startshapes[i].x+startshapes[i].w/2, startshapes[i].y+startshapes[i].h/2, startshapes[i].w/2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+  }
+  count+=1;
+}
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+var red=0;
+var green=0;
+var blue=0;
+var size=45;
+var startx=50;
+var starty=250;
+var sepy=60;
+var shapes=[];
+shapes.push(new Shape(startx,starty,1.5*size,1.5*size,'circle','wheel1'));
+shapes.push(new Shape(startx+1.5*size,starty,1.5*size,1.5*size,'circle','wheel2'));
+shapes.push(new Shape(startx+3*size,starty,1.5*size,1.5*size,'circle','wheel3'));
+shapes.push(new Shape(startx+4.5*size,starty,1.5*size,1.5*size,'circle','wheel4'));
+
+shapes.push(new Shape(startx,starty-1*size,6*size,size,'rectangle','base'));
+
+shapes.push(new Shape(startx+4*size,starty-2*size,1*size,size,'rectangle','seat1'));
+shapes.push(new Shape(startx+2*size,starty-2*size,1*size,size,'rectangle','seat2'));
+shapes.push(new Shape(startx+1*size,starty-2*size,1*size,size,'rectangle','seat3'));
+
+shapes.push(new Shape(startx,starty-3*size,1*size,2*size,'rectangle','back'));
+shapes.push(new Shape(startx+5*size,starty-3*size,1*size,2*size,'rectangle','front'));
+
+
+shapes.push(new Shape(startx,starty-4*size,6*size,size,'rectangle','roof'));
+
+var startshapes=[];
+var ys=0;
+for(i=0;i<shapes.length;i++)
+{
+  var curshape = JSON.parse(JSON.stringify(shapes[i]));
+  startshapes.push(curshape);
+}
+/*
+for(i=shapes.length-1;i>0;i--)
+{
+  const j = Math.floor(Math.random() * i);
+  const temp = JSON.parse(JSON.stringify(startshapes[i]));
+  startshapes[i] = JSON.parse(JSON.stringify(startshapes[j]));
+  startshapes[j] = JSON.parse(JSON.stringify(temp));
+}
+*/
+startshapes[5].y-=size;
+for(i=0;i<shapes.length;i++)
+{
+  if(i>1&&i%2==0)
+  {
+    //alert(i+','+startshapes[i-1].y+','+startshapes[i-2].y);
+    y1=startshapes[i-1].h;
+    y2=startshapes[i-2].h;
+    if(y1>y2)
+    {
+      ys+=y1+size+5;
+    }
+    else
+    {
+      ys+=y2+size+5;
+    }
+  }
+  //alert(i+','+ys);
+  startshapes[i].y=ys;
+  if(i%2==0)
+  {
+    startshapes[i].x=0;
+  }
+  if(i%2==1)
+  {
+    startshapes[i].x=startshapes[i-1].w+1*size;
+  }
+}
+for(i=0;i<shapes.length;i++)
+{
+  //alert(startshapes[i].x+','+startshapes[i].y);
+}
+/*
+var sqrt=Math.ceil(Math.sqrt(shapes.length));
+alert(shapes.length+','+sqrt);
+for(i=0;i<shapes.length;i++)
+{
+  var xs=1+2*(i%sqrt);
+  var ys=1+2*Math.floor(i/sqrt);
+  //alert('xs:'+xs+' ys:'+ys+' i:'+i+' shapes.length:'+shapes.length);
+  var curshape = JSON.parse(JSON.stringify(shapes[i]));
+  startshapes.push(curshape);
+  startshapes[i].x+=size*xs;
+  startshapes[i].y+=size*ys;
+}
+*/
+/*
+startshapes.push(new Shape(size*2,starty+size,size,size));
+startshapes.push(new Shape(size*4,starty+size,size,size));
+startshapes.push(new Shape(0,starty+3*size,size,size));
+startshapes.push(new Shape(2*size,starty+3*size,size,size));
+startshapes.push(new Shape(4*size,starty+3*size,size,size));
+startshapes.push(new Shape(0,starty+5*size,size,size));
+startshapes.push(new Shape(2*size,starty+5*size,size,size));
+startshapes.push(new Shape(4*size,starty+5*size,size,size));
+*/
+
+var endshapes = JSON.parse(JSON.stringify(shapes));
+for(i=0;i<shapes.length;i++)
+{
+  shapes[i].x+=0;
+  startshapes[i].x+=350;
+  //startshapes[i].y-=200;
+  endshapes[i].x+=800;
+  endshapes[i].y+=0;
+}
+var count=0;
+var startwait=2;
+var endwait=5;
+var arraylen=shapes.length;
+var total=startwait+arraylen+endwait;
+ctx.font = "16px Impact";
+ctx.strokeStyle = '#000000';
+ctx.lineWidth='4';
+var styles=['#ff0000','#0000ff'];
+
+var img1 = document.getElementById("human");
+var img2 = document.getElementById("robot");
+var myVar = setInterval(draw, 400);
+var started=false;
+</script>
+</body>
+</html>

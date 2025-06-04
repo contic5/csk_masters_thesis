@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type='text/css'>
+body
+{
+  background-color: lightblue;
+}
+canvas
+{
+  border:black solid 5px;
+}
+</style>
+</head>
+<body>
+  <h1>Assembly Simulation</h1>
+  <h3>Blue Parts are grabbed by Human Arm</h3>
+  <h3>Red Parts are grabbed by Robot Arm</h3>
+  <canvas id="canvasDemo" width="1000" height="600">
+  Sorry, your browser does not support canvas.
+  </canvas>
+<script type='text/javascript'>
+
+class Rect
+{
+  constructor(x,y,w,h)
+  {
+    this.x=x;
+    this.y=y;
+    this.w=w;
+    this.h=h;
+  }
+}
+
+var canvas=document.getElementById("canvasDemo");
+var ctx=canvas.getContext("2d");
+function draw()
+{
+  //ctx.clearRect(0,0,800,400);
+  myhex='#000000';
+  ctx.fillStyle=myhex;
+  for(i=0;i<endrects.length;i++)
+  {
+    ctx.fillRect(endrects[i].x,endrects[i].y,endrects[i].w,endrects[i].h);
+  }
+  for(i=0;i<rects.length;i++)
+  {
+    if(i%2==0)
+    {
+      myhex='#ff0000';
+      ctx.fillStyle=myhex;
+    }
+    if(i%2==1)
+    {
+      myhex='#0000ff';
+      ctx.fillStyle=myhex;
+    }
+    if(count%total>=i+startwait)
+    {
+      ctx.fillRect(rects[i].x,rects[i].y,rects[i].w,rects[i].h);
+      ctx.clearRect(startrects[i].x,startrects[i].y,startrects[i].w,startrects[i].h);
+    }
+    else
+    {
+      ctx.fillRect(startrects[i].x,startrects[i].y,startrects[i].w,startrects[i].h);
+      ctx.clearRect(rects[i].x,rects[i].y,rects[i].w,rects[i].h);
+    }
+  }
+  count+=1;
+}
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+var red=0;
+var green=0;
+var blue=0;
+var size=45;
+var startx=50;
+var starty=235;
+alert('GO');
+var rects=[];
+rects.push(new Rect(startx,starty,size,size));
+rects.push(new Rect(startx+size,starty,size,size));
+rects.push(new Rect(startx+2*size,starty,size,size));
+rects.push(new Rect(startx+3*size,starty,size,size));
+rects.push(new Rect(startx+4*size,starty,size,size));
+
+rects.push(new Rect(startx,starty-1*size,size,size));
+rects.push(new Rect(startx+2*size,starty-1*size,size,size));
+rects.push(new Rect(startx+4*size,starty-1*size,size,size));
+
+rects.push(new Rect(startx+size,starty-2*size,size,size));
+rects.push(new Rect(startx+2*size,starty-2*size,size,size));
+rects.push(new Rect(startx+3*size,starty-2*size,size,size));
+
+rects.push(new Rect(startx+1*size,starty-3*size,size,size));
+rects.push(new Rect(startx+3*size,starty-3*size,size,size));
+
+rects.push(new Rect(startx+1*size,starty-4*size,size,size));
+rects.push(new Rect(startx+2*size,starty-4*size,size,size));
+rects.push(new Rect(startx+3*size,starty-4*size,size,size));
+
+rects.push(new Rect(startx+1*size,starty-5*size,size,size));
+rects.push(new Rect(startx+2*size,starty-5*size,size,size));
+rects.push(new Rect(startx+3*size,starty-5*size,size,size));
+
+var startrects=[];
+var sqrt=Math.ceil(Math.sqrt(rects.length));
+alert(rects.length+','+sqrt);
+for(i=0;i<rects.length;i++)
+{
+  var xs=1+2*(i%sqrt);
+  var ys=1+2*Math.floor(i/sqrt);
+  //alert('xs:'+xs+' ys:'+ys+' i:'+i+' rects.length:'+rects.length);
+  startrects.push(new Rect(startx+size*xs,starty+size*ys,size,size));
+}
+/*
+startrects.push(new Rect(size*2,starty+size,size,size));
+startrects.push(new Rect(size*4,starty+size,size,size));
+startrects.push(new Rect(0,starty+3*size,size,size));
+startrects.push(new Rect(2*size,starty+3*size,size,size));
+startrects.push(new Rect(4*size,starty+3*size,size,size));
+startrects.push(new Rect(0,starty+5*size,size,size));
+startrects.push(new Rect(2*size,starty+5*size,size,size));
+startrects.push(new Rect(4*size,starty+5*size,size,size));
+*/
+
+var endrects = JSON.parse(JSON.stringify(rects));
+for(i=0;i<rects.length;i++)
+{
+  rects[i].x+=400;
+  startrects[i].x+=400;
+}
+var count=0;
+var startwait=5;
+var endwait=5;
+var arraylen=rects.length;
+var total=startwait+arraylen+endwait;
+var myVar = setInterval(draw, 200);
+</script>
+</body>
+</html>
